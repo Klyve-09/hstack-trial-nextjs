@@ -17,6 +17,7 @@ Node.js 26 or newer and npm. Install dependencies with `npm ci` before running t
 - `build`: `next.config.ts`
 - `build`: `package-lock.json`
 - `build`: `package.json`
+- `build`: `postcss.config.mjs`
 - `build`: `src/**`
 - `build`: `tsconfig.json`
 - `build`: `vitest.config.mts`
@@ -24,6 +25,7 @@ Node.js 26 or newer and npm. Install dependencies with `npm ci` before running t
 - `lint`: `next.config.ts`
 - `lint`: `package-lock.json`
 - `lint`: `package.json`
+- `lint`: `postcss.config.mjs`
 - `lint`: `src/**/*.ts`
 - `lint`: `src/**/*.tsx`
 - `lint`: `tsconfig.json`
