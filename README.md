@@ -34,7 +34,7 @@ Build before running `npm start`.
 
 The typed storage module is in `src/lib/items.ts`. Client components read it through a small subscription hook so updates also appear in other open tabs. Storage failures leave existing data untouched and show an error. A title is required (up to 120 characters); notes are optional (up to 10,000 characters).
 
-Uses Next.js 15.5.29 with React 19.3.0. This repository intentionally starts one framework major version back for an upgrade exercise.
+Uses Next.js 16.4.6 with React 19.3.0.
 
 Built from the official Create Next App TypeScript, App Router, ESLint, and Tailwind template. Uses system fonts and requires no remote font assets.
 
