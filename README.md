@@ -70,6 +70,20 @@ npm run alert:save -- "$signals_file" --now 2026-11-17T00:15:00.000Z
 rm "$signals_file"
 ```
 
+### Connect a real receiver after merge
+
+A person runs [scripts/connect-save-alerts.sh](scripts/connect-save-alerts.sh) from the repository root after merge to connect a real receiver. Agents must not run this wizard. It keeps public choices only in shell variables, writes no `.env`, and adds no forwarding code. Off-device sending requires the owner's privacy decision and a follow-up code change. Receiver-specific guidance is marked `[unverified]`; consult the chosen service's official docs.
+
+1. Preconditions: check the repo root, Node.js 26+, npm, and healthy/firing command samples.
+2. Sending decision: confirm the owner's approval for sending signals off-device.
+3. Choose the receiver: enter a public service name and documentation URL, then open it.
+4. Forward signals `[unverified]`: complete a follow-up forwarding ticket and confirm a test signal is visible.
+5. Transfer the rule `[unverified]`: confirm creation and check that the equivalent alert rule is enabled.
+6. Contact channel `[unverified]`: choose a public channel name, attach it, and confirm it is enabled.
+7. Drill: cause storage failures in a test profile, confirm delivery, and check exported signals return exit 1 locally.
+
+If a step fails or the person aborts after step 5 starts, the wizard instructs them to manually disable/delete the rule and contact channel created in the service (`[unverified]`). The script is committed for human use; it has not been run end-to-end by agents.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
