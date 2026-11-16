@@ -51,6 +51,25 @@ Each attempt has a fresh UUID and a UTC timestamp. Failure reasons are `quota_ex
 
 The signal type, fixed reasons, event name, and `parseSaveSignal` validator live in `src/lib/save-signal.ts`. The validator accepts a parsed object or JSON line, returning a signal or `null` for invalid input.
 
+### Save failure alert
+
+`src/lib/save-alert.ts` evaluates the alert locally, with exported constants for its thresholds. It fires when at least 3 counted failures make up at least 10% of attempts in the 15 minutes ending at `now`. Both window boundaries are included; future signals are excluded. Counted failures are `quota_exceeded`, `storage_unavailable`, and `unknown`. Attempts are successes plus those failures; `invalid_input` and `corrupt_data` count as neither failures nor attempts. Empty traffic does not fire.
+
+Export or paste console signals into a local JSONL file, then run `npm run alert:save -- <signals.jsonl> [--now <ISO>]`. `--now` accepts an ISO timestamp with a timezone; without it the command uses the current time. Blank lines are allowed, as is console text before the first `{` (for example, `warn {"event":...}`). Every non-blank line must contain a valid signal from that first `{` through the end of the line.
+
+The command prints one JSON summary line to stdout with `firing`, `failures`, `attempts`, `window_minutes`, and `now`. Exit codes are **0** for healthy/not firing, **1** for firing, and **2** for bad input or usage (including an unreadable file, invalid `--now`, or malformed line). Errors go to stderr with no summary; malformed input never reports healthy. This evaluates captured signals only and sends no notifications or network requests.
+
+This reproducible example uses a temporary file and returns exit code 0:
+
+```sh
+signals_file=$(mktemp)
+cat > "$signals_file" <<'JSONL'
+{"event":"pocket_notes.save","outcome":"success","reason":null,"operation_id":"00000000-0000-4000-8000-000000000001","time":"2026-11-17T00:15:00.000Z"}
+JSONL
+npm run alert:save -- "$signals_file" --now 2026-11-17T00:15:00.000Z
+rm "$signals_file"
+```
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
