@@ -32,15 +32,19 @@ export function ItemsList() {
   );
   return (
     <>
-      <label htmlFor="search-notes">Search notes</label>
-      <input
-        id="search-notes"
-        type="search"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
+      <div className="notes-search">
+        <label htmlFor="search-notes">Search notes</label>
+        <input
+          id="search-notes"
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+      </div>
       {filteredItems.length === 0 ? (
-        <p role="status">No notes match</p>
+        <p className="no-matches" role="status">
+          No notes match
+        </p>
       ) : (
         <ul className="items">
           {filteredItems.map((item) => (

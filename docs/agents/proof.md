@@ -30,6 +30,8 @@ Node.js 26 or newer and npm. Install dependencies with `npm ci` before running t
 - `lint`: `vitest.config.mts`
 - `test`: `package-lock.json`
 - `test`: `package.json`
+- `test`: `src/components/items-list.test.tsx`
+- `test`: `src/components/items-list.tsx`
 - `test`: `src/components/new-item-form.test.tsx`
 - `test`: `src/components/new-item-form.tsx`
 - `test`: `src/lib/items.test.ts`

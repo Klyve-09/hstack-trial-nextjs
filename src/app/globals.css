@@ -130,6 +130,17 @@ h2 {
 .empty p {
   margin: 12px 0 24px;
 }
+.notes-search {
+  margin-bottom: 24px;
+}
+.notes-search label {
+  margin-top: 0;
+}
+.no-matches {
+  color: var(--muted);
+  text-align: center;
+  padding: 40px 20px;
+}
 .items {
   list-style: none;
   padding: 0;
