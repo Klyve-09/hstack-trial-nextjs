@@ -1,4 +1,4 @@
-import { SAVE_EVENT, type SaveFailureReason, type SaveSignal } from "./save-signal";
+import { SAVE_EVENT, type SaveFailureReason, type SaveSignal } from "./save-signal.ts";
 
 export type Item = {
   id: string;
@@ -34,6 +34,22 @@ export function parseItems(raw: string | null): Item[] {
 
 export function readItems(storage: Storage = window.localStorage): Item[] {
   return parseItems(storage.getItem(STORAGE_KEY));
+}
+
+function emitSaveSignal(operation_id: string, reason: SaveFailureReason | null) {
+  const signal: SaveSignal = {
+    event: SAVE_EVENT,
+    ...(reason === null
+      ? { outcome: "success", reason: null }
+      : { outcome: "failure", reason }),
+    operation_id,
+    time: new Date().toISOString(),
+  };
+  if (reason === null) {
+    console.info(JSON.stringify(signal));
+  } else {
+    console.warn(JSON.stringify(signal));
+  }
 }
 
 export function createItem(
@@ -72,32 +88,18 @@ export function createItem(
     reason = "unknown";
     window.dispatchEvent(new Event(CHANGE_EVENT));
   } catch (error) {
+    // WHATWG HTML Web Storage: setItem throws a "QuotaExceededError" DOMException when the value cannot be set: https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-setitem
     if (
       reason === "storage_unavailable" &&
       error instanceof DOMException &&
-      (error.name === "QuotaExceededError" ||
-        error.name === "NS_ERROR_DOM_QUOTA_REACHED")
+      error.name === "QuotaExceededError"
     ) {
       reason = "quota_exceeded";
     }
-    const signal: SaveSignal = {
-      event: SAVE_EVENT,
-      outcome: "failure",
-      reason,
-      operation_id,
-      time: new Date().toISOString(),
-    };
-    console.warn(JSON.stringify(signal));
+    emitSaveSignal(operation_id, reason);
     throw error;
   }
-  const signal: SaveSignal = {
-    event: SAVE_EVENT,
-    outcome: "success",
-    reason: null,
-    operation_id,
-    time: new Date().toISOString(),
-  };
-  console.info(JSON.stringify(signal));
+  emitSaveSignal(operation_id, null);
   return item;
 }
 
