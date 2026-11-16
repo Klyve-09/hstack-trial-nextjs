@@ -38,6 +38,19 @@ Uses Next.js 16.4.6 with React 19.3.0.
 
 Built from the official Create Next App TypeScript, App Router, ESLint, and Tailwind template. Uses system fonts and requires no remote font assets.
 
+## Save signals
+
+Each `createItem` attempt writes one JSON line to the browser console: `console.info` on success and `console.warn` on failure. Signals stay on-device; they are not sent anywhere.
+
+```json
+{"event":"pocket_notes.save","outcome":"success","reason":null,"operation_id":"<uuid>","time":"<ISO 8601 UTC>"}
+{"event":"pocket_notes.save","outcome":"failure","reason":"quota_exceeded","operation_id":"<uuid>","time":"<ISO 8601 UTC>"}
+```
+
+Each attempt has a fresh UUID and a UTC timestamp. Failure reasons are `quota_exceeded` (storage quota reached), `storage_unavailable` (storage missing or access/read/write failed), `corrupt_data` (stored items cannot be parsed), `invalid_input` (title/body validation), and `unknown` (other failures). Success has a `null` reason. Signals never contain note IDs, titles, bodies, stored text, or error messages. Failures still throw and the form keeps its existing error message.
+
+The signal type, fixed reasons, event name, and `parseSaveSignal` validator live in `src/lib/save-signal.ts`. The validator accepts a parsed object or JSON line, returning a signal or `null` for invalid input.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
