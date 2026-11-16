@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "alert:save": "node scripts/check-save-alert.ts"
   },
   "dependencies": {
     "next": "16.4.6",

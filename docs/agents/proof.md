@@ -18,6 +18,7 @@ Node.js 26 or newer and npm. Install dependencies with `npm ci` before running t
 - `build`: `package-lock.json`
 - `build`: `package.json`
 - `build`: `postcss.config.mjs`
+- `build`: `scripts/**/*.ts`
 - `build`: `src/**`
 - `build`: `tsconfig.json`
 - `build`: `vitest.config.mts`
@@ -26,12 +27,15 @@ Node.js 26 or newer and npm. Install dependencies with `npm ci` before running t
 - `lint`: `package-lock.json`
 - `lint`: `package.json`
 - `lint`: `postcss.config.mjs`
+- `lint`: `scripts/**/*.ts`
 - `lint`: `src/**/*.ts`
 - `lint`: `src/**/*.tsx`
 - `lint`: `tsconfig.json`
 - `lint`: `vitest.config.mts`
 - `test`: `package-lock.json`
 - `test`: `package.json`
+- `test`: `scripts/check-save-alert.test.ts`
+- `test`: `scripts/check-save-alert.ts`
 - `test`: `src/components/items-list.test.tsx`
 - `test`: `src/components/items-list.tsx`
 - `test`: `src/components/new-item-form.test.tsx`
@@ -48,3 +52,4 @@ Node.js 26 or newer and npm. Install dependencies with `npm ci` before running t
 - Review-only: `LICENSE`
 - Review-only: `README.md`
 - Review-only: `docs/agents/**`
+- Review-only: `scripts/**/*.sh`

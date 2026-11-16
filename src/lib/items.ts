@@ -1,3 +1,5 @@
+import { SAVE_EVENT, type SaveFailureReason, type SaveSignal } from "./save-signal.ts";
+
 export type Item = {
   id: string;
   title: string;
@@ -34,26 +36,70 @@ export function readItems(storage: Storage = window.localStorage): Item[] {
   return parseItems(storage.getItem(STORAGE_KEY));
 }
 
+function emitSaveSignal(operation_id: string, reason: SaveFailureReason | null) {
+  const signal: SaveSignal = {
+    event: SAVE_EVENT,
+    ...(reason === null
+      ? { outcome: "success", reason: null }
+      : { outcome: "failure", reason }),
+    operation_id,
+    time: new Date().toISOString(),
+  };
+  if (reason === null) {
+    console.info(JSON.stringify(signal));
+  } else {
+    console.warn(JSON.stringify(signal));
+  }
+}
+
 export function createItem(
   title: string,
   body: string,
-  storage: Storage = window.localStorage,
+  storage?: Storage,
 ): Item {
-  const cleanTitle = title.trim();
-  if (!cleanTitle || cleanTitle.length > 120 || body.length > 10000) {
-    throw new Error(
-      "Use a title of 1–120 characters and a body of at most 10,000 characters.",
-    );
+  const operation_id = crypto.randomUUID();
+  let reason: SaveFailureReason = "unknown";
+  let item: Item;
+  try {
+    reason = "storage_unavailable";
+    const target = storage === undefined ? window.localStorage : storage;
+    reason = "unknown";
+    const cleanTitle = title.trim();
+    if (!cleanTitle || cleanTitle.length > 120 || body.length > 10000) {
+      reason = "invalid_input";
+      throw new Error(
+        "Use a title of 1–120 characters and a body of at most 10,000 characters.",
+      );
+    }
+    reason = "storage_unavailable";
+    const raw = target.getItem(STORAGE_KEY);
+    reason = "corrupt_data";
+    const items = parseItems(raw);
+    reason = "unknown";
+    item = {
+      id: crypto.randomUUID(),
+      title: cleanTitle,
+      body: body.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    const serialized = JSON.stringify([item, ...items]);
+    reason = "storage_unavailable";
+    target.setItem(STORAGE_KEY, serialized);
+    reason = "unknown";
+    window.dispatchEvent(new Event(CHANGE_EVENT));
+  } catch (error) {
+    // WHATWG HTML Web Storage: setItem throws a "QuotaExceededError" DOMException when the value cannot be set: https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-setitem
+    if (
+      reason === "storage_unavailable" &&
+      error instanceof DOMException &&
+      error.name === "QuotaExceededError"
+    ) {
+      reason = "quota_exceeded";
+    }
+    emitSaveSignal(operation_id, reason);
+    throw error;
   }
-  const items = readItems(storage);
-  const item: Item = {
-    id: crypto.randomUUID(),
-    title: cleanTitle,
-    body: body.trim(),
-    createdAt: new Date().toISOString(),
-  };
-  storage.setItem(STORAGE_KEY, JSON.stringify([item, ...items]));
-  window.dispatchEvent(new Event(CHANGE_EVENT));
+  emitSaveSignal(operation_id, null);
   return item;
 }
 
