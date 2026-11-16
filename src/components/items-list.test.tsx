@@ -58,6 +58,22 @@ it("shows every saved item for a whitespace-only query", async () => {
   ).toEqual(["Weekend supplies", "Groceries", "Camping plans"]);
 });
 
+it("shows the first-run empty state without search when no items are saved", () => {
+  localStorage.clear();
+  render(<ItemsList />);
+
+  expect(
+    screen.getByRole("heading", { name: "A little room for your thoughts." }),
+  ).toBeVisible();
+  expect(
+    screen.getByRole("link", { name: "Write your first item" }),
+  ).toHaveAttribute("href", "/new");
+  expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
+  expect(screen.queryByText("Search notes")).not.toBeInTheDocument();
+  expect(screen.queryByText("No notes match")).not.toBeInTheDocument();
+  expect(screen.queryByRole("list")).not.toBeInTheDocument();
+});
+
 it("restores every saved item in order when the search is cleared", async () => {
   const user = userEvent.setup();
   render(<ItemsList />);
@@ -67,6 +83,29 @@ it("restores every saved item in order when the search is cleared", async () => 
 
   await user.clear(search);
 
+  expect(
+    screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
+  ).toEqual(["Weekend supplies", "Groceries", "Camping plans"]);
+});
+
+it("shows a status without cards for no matches and restores all items when cleared", async () => {
+  const user = userEvent.setup();
+  render(<ItemsList />);
+  const search = screen.getByLabelText("Search notes");
+
+  await user.type(search, "unmatched query");
+
+  expect(screen.getByRole("status")).toHaveTextContent("No notes match");
+  expect(screen.getByRole("status")).toBeVisible();
+  expect(screen.queryByRole("list")).not.toBeInTheDocument();
+  expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+  expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  expect(search).toBeVisible();
+
+  await user.clear(search);
+
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  expect(screen.getAllByRole("listitem")).toHaveLength(3);
   expect(
     screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
   ).toEqual(["Weekend supplies", "Groceries", "Camping plans"]);

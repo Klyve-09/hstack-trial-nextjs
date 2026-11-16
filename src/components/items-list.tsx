@@ -39,23 +39,27 @@ export function ItemsList() {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
-      <ul className="items">
-        {filteredItems.map((item) => (
-          <li key={item.id}>
-            <Link
-              className="item-card"
-              href={`/items/${encodeURIComponent(item.id)}`}
-            >
-              <time dateTime={item.createdAt}>
-                {new Date(item.createdAt).toLocaleDateString()}
-              </time>
-              <h2>{item.title}</h2>
-              <p>{item.body || "No additional notes."}</p>
-              <span className="open-item">Open item →</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {filteredItems.length === 0 ? (
+        <p role="status">No notes match</p>
+      ) : (
+        <ul className="items">
+          {filteredItems.map((item) => (
+            <li key={item.id}>
+              <Link
+                className="item-card"
+                href={`/items/${encodeURIComponent(item.id)}`}
+              >
+                <time dateTime={item.createdAt}>
+                  {new Date(item.createdAt).toLocaleDateString()}
+                </time>
+                <h2>{item.title}</h2>
+                <p>{item.body || "No additional notes."}</p>
+                <span className="open-item">Open item →</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
