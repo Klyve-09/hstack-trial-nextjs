@@ -28,7 +28,7 @@ Build before running `npm start`.
 
 ## Structure
 
-- `/`: all saved items, newest first
+- `/`: all saved items, newest first, with search by title or notes
 - `/new`: create an item
 - `/items/[id]`: read an item and delete it after confirmation
 
