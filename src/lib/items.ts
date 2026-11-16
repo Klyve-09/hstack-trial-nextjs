@@ -3,6 +3,7 @@ export type Item = {
   title: string;
   body: string;
   createdAt: string;
+  pinned?: boolean;
 };
 
 export const STORAGE_KEY = "pocket-notes.items.v1";
@@ -20,6 +21,7 @@ export function parseItems(raw: string | null): Item[] {
         typeof item.id === "string" &&
         typeof item.title === "string" &&
         typeof item.body === "string" &&
+        (item.pinned === undefined || typeof item.pinned === "boolean") &&
         typeof item.createdAt === "string" &&
         Number.isFinite(Date.parse(item.createdAt)),
     ) ||
@@ -55,6 +57,21 @@ export function createItem(
   storage.setItem(STORAGE_KEY, JSON.stringify([item, ...items]));
   window.dispatchEvent(new Event(CHANGE_EVENT));
   return item;
+}
+
+export function toggleItemPin(id: string, storage: Storage = window.localStorage) {
+  const items = readItems(storage);
+  const item = items.find((entry) => entry.id === id);
+  if (!item) throw new Error("Item not found.");
+  storage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(
+      items.map((entry) =>
+        entry.id === id ? { ...entry, pinned: !entry.pinned } : entry,
+      ),
+    ),
+  );
+  window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
 export function deleteItem(id: string, storage: Storage = window.localStorage) {

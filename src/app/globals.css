@@ -260,3 +260,30 @@ textarea {
     padding: 40px 20px;
   }
 }
+
+.item-heading,
+.list-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.item-heading h1 {
+  min-width: 0;
+}
+.item-heading button {
+  flex-shrink: 0;
+  padding: 10px;
+  line-height: 1;
+}
+.list-filters {
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.pin-filter {
+  cursor: pointer;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

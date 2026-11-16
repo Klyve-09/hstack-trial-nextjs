@@ -1,9 +1,14 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
 import { useItems } from "@/lib/use-items";
 
 export function ItemsList() {
   const { items, loading, error } = useItems();
+  const [pinnedOnly, setPinnedOnly] = useState(false);
+  const visibleItems = items
+    .filter((item) => !pinnedOnly || item.pinned)
+    .sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
   if (loading) return <p role="status">Loading your items…</p>;
   if (error)
     return (
@@ -23,22 +28,34 @@ export function ItemsList() {
       </div>
     );
   return (
-    <ul className="items">
-      {items.map((item) => (
-        <li key={item.id}>
-          <Link
-            className="item-card"
-            href={`/items/${encodeURIComponent(item.id)}`}
-          >
-            <time dateTime={item.createdAt}>
-              {new Date(item.createdAt).toLocaleDateString()}
-            </time>
-            <h2>{item.title}</h2>
-            <p>{item.body || "No additional notes."}</p>
-            <span className="open-item">Open item →</span>
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <>
+      <div className="list-filters">
+        <div className="pin-filter" onClick={() => setPinnedOnly(!pinnedOnly)}>
+          {pinnedOnly ? "Show all items" : "Show pinned items"}
+        </div>
+        <span>{visibleItems.length} items</span>
+      </div>
+      {visibleItems.length === 0 && (
+        <p>No pinned items yet. Open an item to pin it.</p>
+      )}
+      <ul className="items">
+        {visibleItems.map((item) => (
+          <li key={item.id}>
+            <Link
+              className="item-card"
+              href={`/items/${encodeURIComponent(item.id)}`}
+            >
+              <time dateTime={item.createdAt}>
+                {new Date(item.createdAt).toLocaleDateString()}
+              </time>
+              {item.pinned && <span className="eyebrow">Pinned</span>}
+              <h2>{item.title}</h2>
+              <p>{item.body || "No additional notes."}</p>
+              <span className="open-item">Open item →</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
