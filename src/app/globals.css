@@ -50,7 +50,7 @@ button:disabled {
   outline-offset: 4px;
 }
 .shell {
-  max-width: 960px;
+  max-width: 1200px;
   margin: auto;
   padding: 0 32px;
 }
