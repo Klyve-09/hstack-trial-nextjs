@@ -32,7 +32,7 @@ Build before running `npm start`.
 - `/new`: create an item
 - `/items/[id]`: read an item and delete it after confirmation
 
-Every page shows the app version below the storage notice in the footer.
+Every page shows the app name and version (`Pocket Notes v<version>`) below the storage notice in the footer.
 
 The typed storage module is in `src/lib/items.ts`. Client components read it through a small subscription hook so updates also appear in other open tabs. Storage failures leave existing data untouched and show an error. A title is required (up to 120 characters); notes are optional (up to 10,000 characters).
 
