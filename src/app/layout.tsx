@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AppVersion } from "@/components/app-version";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,8 +25,11 @@ export default function RootLayout({
           </header>
           <main>{children}</main>
           <footer>
-            Saved in this browser, on this device. Clearing browser data removes
-            your items.
+            <p>
+              Saved in this browser, on this device. Clearing browser data
+              removes your items.
+            </p>
+            <AppVersion />
           </footer>
         </div>
       </body>
